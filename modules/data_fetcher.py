@@ -125,63 +125,76 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
             response.raise_for_status()
             data = response.json()
 
+            # API returns list of events directly (not nested under "events" key)
+            events = data if isinstance(data, list) else data.get("events", [])
+
             # Find matching event
-            for event in data.get("events", []):
+            for event in events:
                 # Try to match by team names in event
                 event_name = event.get("name", "").lower()
-                if match_key.lower() in event_name or (
-                    "nederland" in event_name and "japan" in event_name
-                ):
-                    # Extract odds from bookmakers
-                    for bookmaker in event.get("bookmakers", []):
-                        markets = {m["key"]: m for m in bookmaker.get("markets", [])}
+                home_team = event.get("home_team", "").lower()
+                away_team = event.get("away_team", "").lower()
 
-                        h2h_market = markets.get("h2h", {})
-                        totals_market = markets.get("totals", {})
+                # Match by team names or match_key
+                match_found = (
+                    match_key.lower() in event_name
+                    or (home_team and away_team and match_key.lower().replace("_", " ") in f"{home_team} {away_team}")
+                    or ("nederland" in event_name and "japan" in event_name)
+                )
 
-                        if h2h_market:
-                            outcomes = {o["name"]: o["price"] for o in h2h_market.get("outcomes", [])}
-                            home_odds = outcomes.get(event.get("home_team", ""), 1.0)
-                            away_odds = outcomes.get(event.get("away_team", ""), 1.0)
-                            draw_odds = outcomes.get("Draw", 1.0)
+                if not match_found:
+                    continue
 
-                            # Convert decimal odds to probabilities
-                            home_prob = 1.0 / home_odds if home_odds > 0 else 0.33
-                            away_prob = 1.0 / away_odds if away_odds > 0 else 0.33
-                            draw_prob = 1.0 / draw_odds if draw_odds > 0 else 0.33
+                # Extract odds from bookmakers
+                for bookmaker in event.get("bookmakers", []):
+                    markets = {m["key"]: m for m in bookmaker.get("markets", [])}
 
-                            # Normalize
-                            total = home_prob + away_prob + draw_prob
-                            if total > 0:
-                                home_prob /= total
-                                away_prob /= total
-                                draw_prob /= total
+                    h2h_market = markets.get("h2h", {})
+                    totals_market = markets.get("totals", {})
 
-                            # Extract over/under
-                            over_under = {
-                                "over": 0.5,
-                                "under": 0.5,
-                            }
-                            for outcome in totals_market.get("outcomes", []):
-                                if outcome.get("point") == 2.5:
-                                    odds = outcome.get("price", 1.0)
-                                    prob = 1.0 / odds if odds > 0 else 0.5
-                                    if outcome.get("name", "").lower() == "over":
-                                        over_under["over"] = prob
-                                    else:
-                                        over_under["under"] = prob
+                    if h2h_market:
+                        outcomes = {o["name"]: o["price"] for o in h2h_market.get("outcomes", [])}
+                        home_odds = outcomes.get(event.get("home_team", ""), 1.0)
+                        away_odds = outcomes.get(event.get("away_team", ""), 1.0)
+                        draw_odds = outcomes.get("Draw", 1.0)
 
-                            result = {
-                                "home_win": home_prob,
-                                "draw": draw_prob,
-                                "away_win": away_prob,
-                                "over_2_5": over_under["over"],
-                                "under_2_5": over_under["under"],
-                            }
-                            cache_set(cache_key, result)
-                            return result
+                        # Convert decimal odds to probabilities
+                        home_prob = 1.0 / home_odds if home_odds > 0 else 0.33
+                        away_prob = 1.0 / away_odds if away_odds > 0 else 0.33
+                        draw_prob = 1.0 / draw_odds if draw_odds > 0 else 0.33
 
-        except (requests.RequestException, KeyError, ValueError) as e:
+                        # Normalize
+                        total = home_prob + away_prob + draw_prob
+                        if total > 0:
+                            home_prob /= total
+                            away_prob /= total
+                            draw_prob /= total
+
+                        # Extract over/under
+                        over_under = {
+                            "over": 0.5,
+                            "under": 0.5,
+                        }
+                        for outcome in totals_market.get("outcomes", []):
+                            if outcome.get("point") == 2.5:
+                                odds = outcome.get("price", 1.0)
+                                prob = 1.0 / odds if odds > 0 else 0.5
+                                if outcome.get("name", "").lower() == "over":
+                                    over_under["over"] = prob
+                                else:
+                                    over_under["under"] = prob
+
+                        result = {
+                            "home_win": home_prob,
+                            "draw": draw_prob,
+                            "away_win": away_prob,
+                            "over_2_5": over_under["over"],
+                            "under_2_5": over_under["under"],
+                        }
+                        cache_set(cache_key, result)
+                        return result
+
+        except (requests.RequestException, KeyError, ValueError, TypeError) as e:
             print(f"Odds API error: {e}. Falling back to mock data.")
 
     # Fallback to mock
