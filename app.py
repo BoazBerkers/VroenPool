@@ -120,7 +120,7 @@ def render_ev_heatmap(score_matrix: Dict, best_pred: tuple = None) -> None:
         else:
             return "background-color: #F7C1C1"  # Red
 
-    styled_df = df.style.applymap(color_ev)
+    styled_df = df.style.map(color_ev)
     st.dataframe(styled_df, use_container_width=True)
 
     # Legend
