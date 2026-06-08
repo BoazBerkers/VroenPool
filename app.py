@@ -45,6 +45,19 @@ def render_odds_card(odds: Dict) -> None:
         ou = "Under" if odds.get("under_2_5", 0.5) > odds.get("over_2_5", 0.5) else "Over"
         st.metric("O/U 2.5", ou)
 
+    # Additional O/U markets for calibration transparency
+    if odds.get("over_3_5") is not None:
+        st.write("**Additional Markets:**")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            ou_35 = "Under" if odds.get("under_3_5", 0.5) > odds.get("over_3_5", 0.5) else "Over"
+            st.caption(f"O/U 3.5: {ou_35}")
+        with col2:
+            ou_45 = "Under" if odds.get("under_4_5", 0.5) > odds.get("over_4_5", 0.5) else "Over"
+            st.caption(f"O/U 4.5: {ou_45}")
+        with col3:
+            st.caption(f"(Used for calibration)")
+
 
 def render_injuries_card(team_name: str, injuries: List[Dict]) -> None:
     """Render injuries card."""
@@ -70,24 +83,58 @@ def render_form_card(team_name: str, form: List[Dict]) -> None:
         st.write(f"Avg goals: {avg_goals:.2f}")
 
 
-def render_ev_heatmap(score_matrix: Dict) -> None:
-    """Render EV heatmap as dataframe."""
+def render_ev_heatmap(score_matrix: Dict, best_pred: tuple = None) -> None:
+    """Render EV heatmap with color gradient."""
     st.subheader("EV Heatmap: All Predictions (0-0 to 5-5)")
 
     # Build EV matrix
     ev_data = {}
+    max_ev = 0
     for pred_a in range(6):
         row = {}
         for pred_b in range(6):
             ev = expected_value(pred_a, pred_b, score_matrix)
             row[pred_b] = round(ev, 1)
+            max_ev = max(max_ev, ev)
         ev_data[pred_a] = row
 
     df = pd.DataFrame(ev_data).T
     df.index.name = "Team A →"
     df.columns.name = "Team B →"
 
-    st.dataframe(df, use_container_width=True)
+    # Create color gradient: red (low EV) to green (high EV)
+    def color_ev(val):
+        if max_ev == 0:
+            return "background-color: #f0f0f0"
+        pct = val / max_ev
+        if pct > 0.9:
+            return "background-color: #C0DD97"  # Bright green
+        elif pct > 0.8:
+            return "background-color: #D4EB8F"
+        elif pct > 0.7:
+            return "background-color: #EAF3DE"  # Light green
+        elif pct > 0.5:
+            return "background-color: #FAC775"  # Yellow
+        elif pct > 0.3:
+            return "background-color: #F5C4B3"  # Light red
+        else:
+            return "background-color: #F7C1C1"  # Red
+
+    styled_df = df.style.applymap(color_ev)
+    st.dataframe(styled_df, use_container_width=True)
+
+    # Legend
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        st.write("🟩 High EV")
+    with col2:
+        st.write("🟩 Good EV")
+    with col3:
+        st.write("🟨 Fair EV")
+    with col4:
+        st.write("🟥 Low EV")
+    with col5:
+        st.write("🟥 Poor EV")
 
 
 def render_top_alternatives(
@@ -178,15 +225,17 @@ def main():
     form_b = all_data["form_b"]
     context = all_data["context"]
 
-    # Convert odds to lambdas
+    # Convert odds to lambdas with multi-market calibration
     total_goals_est = (
         2.6 if odds.get("under_2_5", 0.5) > 0.5 else 2.8
-    )  # Estimate based on O/U
+    )  # Estimate based on O/U 2.5
     lambda_a, lambda_b = odds_to_lambdas(
         odds.get("home_win", 0.4),
         odds.get("draw", 0.25),
         odds.get("away_win", 0.35),
         total_goals_estimate=total_goals_est,
+        over_3_5=odds.get("over_3_5"),
+        over_4_5=odds.get("over_4_5"),
     )
 
     # Apply injury adjustments
@@ -261,12 +310,58 @@ def main():
     st.markdown("---")
 
     # EV Heatmap
-    render_ev_heatmap(score_matrix)
+    render_ev_heatmap(score_matrix, (final_a, final_b))
 
     st.markdown("---")
 
     # Alternatives
     render_top_alternatives(score_matrix, (final_a, final_b), final_ev)
+
+    st.markdown("---")
+
+    # Upside Scenarios Section
+    st.subheader("📈 Upside Scenarios (High-Risk, High-Reward)")
+    st.caption("Alternative predictions if you believe in a blowout or upset")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.write("**If Home Team Dominates:**")
+        upside_pred = (final_a + 2, final_b)
+        if upside_pred[0] <= 5:
+            upside_ev = expected_value(upside_pred[0], upside_pred[1], score_matrix)
+            delta = upside_ev - final_ev
+            st.metric(
+                f"{upside_pred[0]}-{upside_pred[1]}",
+                f"{upside_ev:.1f} pts",
+                f"{delta:+.1f}" if delta < 0 else f"+{delta:.1f}",
+            )
+            st.caption(f"Risk: {abs(delta):.1f}pts lower, but covers big wins")
+
+    with col2:
+        st.write("**If Upset Occurs:**")
+        upside_pred = (final_b + 1, final_a + 1)
+        if upside_pred[0] <= 5 and upside_pred[1] <= 5:
+            upside_ev = expected_value(upside_pred[0], upside_pred[1], score_matrix)
+            delta = upside_ev - final_ev
+            st.metric(
+                f"{upside_pred[0]}-{upside_pred[1]}",
+                f"{upside_ev:.1f} pts",
+                f"{delta:+.1f}" if delta < 0 else f"+{delta:.1f}",
+            )
+            st.caption("Risk: unlikely, but big payout if true")
+
+    with col3:
+        st.write("**High-Scoring Draw:**")
+        upside_pred = (2, 2)
+        upside_ev = expected_value(upside_pred[0], upside_pred[1], score_matrix)
+        delta = upside_ev - final_ev
+        st.metric(
+            f"{upside_pred[0]}-{upside_pred[1]}",
+            f"{upside_ev:.1f} pts",
+            f"{delta:+.1f}" if delta < 0 else f"+{delta:.1f}",
+        )
+        st.caption("Risk: lower EV, but 200pts if exact or 100 if any draw")
 
     st.markdown("---")
 

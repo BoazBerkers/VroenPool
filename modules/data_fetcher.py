@@ -102,7 +102,7 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
         use_mock: Use mock data (for testing when API unavailable)
 
     Returns:
-        Dict with win probabilities and over/under odds
+        Dict with win probabilities and over/under odds (2.5, 3.5, 4.5)
     """
     # Check cache first
     cache_key = f"odds_{match_key}"
@@ -170,26 +170,48 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
                             away_prob /= total
                             draw_prob /= total
 
-                        # Extract over/under
+                        # Extract over/under for multiple thresholds
                         over_under = {
-                            "over": 0.5,
-                            "under": 0.5,
+                            "over_2_5": 0.5,
+                            "under_2_5": 0.5,
+                            "over_3_5": 0.45,
+                            "under_3_5": 0.55,
+                            "over_4_5": 0.35,
+                            "under_4_5": 0.65,
                         }
+
                         for outcome in totals_market.get("outcomes", []):
-                            if outcome.get("point") == 2.5:
-                                odds = outcome.get("price", 1.0)
-                                prob = 1.0 / odds if odds > 0 else 0.5
-                                if outcome.get("name", "").lower() == "over":
-                                    over_under["over"] = prob
+                            point = outcome.get("point")
+                            odds = outcome.get("price", 1.0)
+                            prob = 1.0 / odds if odds > 0 else 0.5
+                            name = outcome.get("name", "").lower()
+
+                            if point == 2.5:
+                                if "over" in name:
+                                    over_under["over_2_5"] = prob
                                 else:
-                                    over_under["under"] = prob
+                                    over_under["under_2_5"] = prob
+                            elif point == 3.5:
+                                if "over" in name:
+                                    over_under["over_3_5"] = prob
+                                else:
+                                    over_under["under_3_5"] = prob
+                            elif point == 4.5:
+                                if "over" in name:
+                                    over_under["over_4_5"] = prob
+                                else:
+                                    over_under["under_4_5"] = prob
 
                         result = {
                             "home_win": home_prob,
                             "draw": draw_prob,
                             "away_win": away_prob,
-                            "over_2_5": over_under["over"],
-                            "under_2_5": over_under["under"],
+                            "over_2_5": over_under["over_2_5"],
+                            "under_2_5": over_under["under_2_5"],
+                            "over_3_5": over_under.get("over_3_5", 0.45),
+                            "under_3_5": over_under.get("under_3_5", 0.55),
+                            "over_4_5": over_under.get("over_4_5", 0.35),
+                            "under_4_5": over_under.get("under_4_5", 0.65),
                         }
                         cache_set(cache_key, result)
                         return result
@@ -206,6 +228,10 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
             "away_win": 0.35,
             "over_2_5": 0.45,
             "under_2_5": 0.55,
+            "over_3_5": 0.40,
+            "under_3_5": 0.60,
+            "over_4_5": 0.30,
+            "under_4_5": 0.70,
         },
     )
 

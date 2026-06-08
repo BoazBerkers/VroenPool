@@ -40,20 +40,22 @@ def odds_to_lambdas(
     win_prob_a: float,
     draw_prob: float,
     win_prob_b: float,
-    total_goals_estimate: float = None
+    total_goals_estimate: float = None,
+    over_3_5: float = None,
+    over_4_5: float = None,
 ) -> Tuple[float, float]:
     """
     Estimate expected goals (lambdas) from match odds.
 
-    Uses a simplified approach:
-    - Total goals estimate comes from Over/Under market
-    - Win probability split determines team strength
+    Uses multiple O/U markets for better calibration.
 
     Args:
         win_prob_a: Probability team A wins (0-1)
         draw_prob: Probability of draw (0-1)
         win_prob_b: Probability team B wins (0-1)
-        total_goals_estimate: Expected total goals (default: auto-calculated)
+        total_goals_estimate: Expected total goals (from O/U 2.5)
+        over_3_5: Probability of over 3.5 goals
+        over_4_5: Probability of over 4.5 goals
 
     Returns:
         Tuple of (lambda_a, lambda_b)
@@ -67,10 +69,22 @@ def odds_to_lambdas(
     draw_prob /= total_prob
     win_prob_b /= total_prob
 
-    # Estimate total goals if not provided
+    # Calibrate total goals from multiple O/U markets
     if total_goals_estimate is None:
-        # Typical match: ~2.6 goals
-        total_goals_estimate = 2.6
+        total_goals_estimate = 2.6  # Default
+
+        # Refine estimate using O/U 3.5 and 4.5 if available
+        if over_3_5 is not None:
+            # Over 3.5 tells us about high-scoring games
+            # Higher over_3_5 → higher expected goals
+            total_goals_estimate = 2.8 if over_3_5 > 0.45 else 2.4
+
+        if over_4_5 is not None:
+            # Over 4.5 is very high-scoring
+            if over_4_5 > 0.35:
+                total_goals_estimate = 3.2
+            elif over_4_5 > 0.25:
+                total_goals_estimate = 2.9
 
     # Split goals by team strength
     # Team A is expected to score a fraction proportional to their win probability
