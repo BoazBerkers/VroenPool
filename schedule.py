@@ -78,15 +78,46 @@ def get_upcoming_matches(hours_ahead: int = 24) -> List[Dict]:
     Returns:
         List of upcoming matches
     """
-    now = datetime.utcnow()
+    from datetime import datetime
+    now = datetime.now()
     upcoming = []
 
     for match in SAMPLE_SCHEDULE:
-        match_time = datetime.fromisoformat(match["date"].replace("Z", "+00:00"))
-        if 0 <= (match_time - now).total_seconds() <= hours_ahead * 3600:
-            upcoming.append(match)
+        try:
+            # Parse date formats like "11 jun 2026 21:00" or ISO format
+            date_str = match.get("date", "")
 
-    return sorted(upcoming, key=lambda m: m["date"])
+            # Try parsing ISO format first (with or without Z)
+            if "T" in date_str:
+                match_time = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+                # Convert to naive for comparison
+                if match_time.tzinfo:
+                    match_time = match_time.replace(tzinfo=None)
+            else:
+                # Parse Dutch date format: "11 jun 2026 21:00"
+                month_map = {
+                    "jan": 1, "feb": 2, "mrt": 3, "apr": 4, "mei": 5, "jun": 6,
+                    "jul": 7, "aug": 8, "sep": 9, "okt": 10, "nov": 11, "dec": 12
+                }
+                parts = date_str.lower().split()
+                if len(parts) >= 4:
+                    day = int(parts[0])
+                    month = month_map.get(parts[1], 1)
+                    year = int(parts[2])
+                    time_parts = parts[3].split(":")
+                    hour = int(time_parts[0])
+                    minute = int(time_parts[1]) if len(time_parts) > 1 else 0
+                    match_time = datetime(year, month, day, hour, minute)
+                else:
+                    continue
+
+            time_diff = (match_time - now).total_seconds()
+            if 0 <= time_diff <= hours_ahead * 3600:
+                upcoming.append(match)
+        except (ValueError, IndexError):
+            continue
+
+    return sorted(upcoming, key=lambda m: m.get("date", ""))
 
 
 def get_next_match() -> Optional[Dict]:

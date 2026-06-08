@@ -119,7 +119,7 @@ def main():
     # Sidebar
     with st.sidebar:
         st.markdown("### Configuration")
-        use_mock = st.checkbox("Use mock data", value=True)
+        use_mock = st.checkbox("Use mock data", value=False)
         st.markdown("---")
 
         # Match selector

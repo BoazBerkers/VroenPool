@@ -1,1 +1,506 @@
-[]
+[
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "11 jun 2026 21:00",
+    "team_a": "Mexico",
+    "team_b": "Zuid Afrika",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "12 jun 2026 04:00",
+    "team_a": "Zuid Korea",
+    "team_b": "Tsjechië",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "12 jun 2026 21:00",
+    "team_a": "Canada",
+    "team_b": "Bosnië",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "13 jun 2026 03:00",
+    "team_a": "USA",
+    "team_b": "Paraguay",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "13 jun 2026 21:00",
+    "team_a": "Qatar",
+    "team_b": "Zwitserland",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "14 jun 2026 00:00",
+    "team_a": "Brazilië",
+    "team_b": "Marokko",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "14 jun 2026 03:00",
+    "team_a": "Haiti",
+    "team_b": "Schotland",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "14 jun 2026 06:00",
+    "team_a": "Australië",
+    "team_b": "Turkije",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "14 jun 2026 19:00",
+    "team_a": "Duitsland",
+    "team_b": "Curacao",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "14 jun 2026 22:00",
+    "team_a": "Nederland",
+    "team_b": "Japan",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "15 jun 2026 01:00",
+    "team_a": "Ivoorkust",
+    "team_b": "Ecuador",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "15 jun 2026 04:00",
+    "team_a": "Zweden",
+    "team_b": "Tunesië",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "15 jun 2026 18:00",
+    "team_a": "Spanje",
+    "team_b": "Kaapverdie",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "15 jun 2026 21:00",
+    "team_a": "België",
+    "team_b": "Egypte",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "16 jun 2026 00:00",
+    "team_a": "Saoedi-Arabie",
+    "team_b": "Uruguay",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "16 jun 2026 03:00",
+    "team_a": "Iran",
+    "team_b": "Nieuw Zeeland",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "16 jun 2026 21:00",
+    "team_a": "Frankrijk",
+    "team_b": "Senegal",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "17 jun 2026 00:00",
+    "team_a": "Irak",
+    "team_b": "Noorwegen",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "17 jun 2026 03:00",
+    "team_a": "Argentinië",
+    "team_b": "Algerije",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "17 jun 2026 06:00",
+    "team_a": "Oostenrijk",
+    "team_b": "Jordanie",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "17 jun 2026 19:00",
+    "team_a": "Portugal",
+    "team_b": "Congo",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "17 jun 2026 22:00",
+    "team_a": "Engeland",
+    "team_b": "Kroatië",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "18 jun 2026 01:00",
+    "team_a": "Ghana",
+    "team_b": "Panama",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "18 jun 2026 04:00",
+    "team_a": "Oezbekistan",
+    "team_b": "Colombia",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "18 jun 2026 18:00",
+    "team_a": "Tsjechië",
+    "team_b": "Zuid Afrika",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "18 jun 2026 21:00",
+    "team_a": "Zwitserland",
+    "team_b": "Bosnië",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "19 jun 2026 00:00",
+    "team_a": "Canada",
+    "team_b": "Qatar",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "19 jun 2026 03:00",
+    "team_a": "Mexico",
+    "team_b": "Zuid Korea",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "19 jun 2026 21:00",
+    "team_a": "USA",
+    "team_b": "Australië",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "20 jun 2026 00:00",
+    "team_a": "Schotland",
+    "team_b": "Marokko",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "20 jun 2026 03:00",
+    "team_a": "Brazilië",
+    "team_b": "Haiti",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "20 jun 2026 06:00",
+    "team_a": "Turkije",
+    "team_b": "Paraguay",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "20 jun 2026 19:00",
+    "team_a": "Nederland",
+    "team_b": "Zweden",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "20 jun 2026 22:00",
+    "team_a": "Duitsland",
+    "team_b": "Ivoorkust",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "21 jun 2026 02:00",
+    "team_a": "Ecuador",
+    "team_b": "Curacao",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "21 jun 2026 06:00",
+    "team_a": "Tunesië",
+    "team_b": "Japan",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "21 jun 2026 18:00",
+    "team_a": "Spanje",
+    "team_b": "Saoedi-Arabie",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "21 jun 2026 21:00",
+    "team_a": "België",
+    "team_b": "Iran",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "22 jun 2026 00:00",
+    "team_a": "Uruguay",
+    "team_b": "Kaapverdie",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "22 jun 2026 03:00",
+    "team_a": "Nieuw Zeeland",
+    "team_b": "Egypte",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "22 jun 2026 19:00",
+    "team_a": "Argentinië",
+    "team_b": "Oostenrijk",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "22 jun 2026 23:00",
+    "team_a": "Frankrijk",
+    "team_b": "Irak",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "23 jun 2026 02:00",
+    "team_a": "Noorwegen",
+    "team_b": "Senegal",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "23 jun 2026 05:00",
+    "team_a": "Jordanie",
+    "team_b": "Algerije",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "23 jun 2026 19:00",
+    "team_a": "Portugal",
+    "team_b": "Oezbekistan",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "23 jun 2026 22:00",
+    "team_a": "Engeland",
+    "team_b": "Ghana",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "24 jun 2026 01:00",
+    "team_a": "Panama",
+    "team_b": "Kroatië",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "24 jun 2026 04:00",
+    "team_a": "Colombia",
+    "team_b": "Congo",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "24 jun 2026 21:00",
+    "team_a": "Zwitserland",
+    "team_b": "Canada",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "24 jun 2026 21:00",
+    "team_a": "Bosnië",
+    "team_b": "Qatar",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "25 jun 2026 00:00",
+    "team_a": "Schotland",
+    "team_b": "Brazilië",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "25 jun 2026 00:00",
+    "team_a": "Marokko",
+    "team_b": "Haiti",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "25 jun 2026 03:00",
+    "team_a": "Tsjechië",
+    "team_b": "Mexico",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "25 jun 2026 03:00",
+    "team_a": "Zuid Afrika",
+    "team_b": "Zuid Korea",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "25 jun 2026 22:00",
+    "team_a": "Curacao",
+    "team_b": "Ivoorkust",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "25 jun 2026 22:00",
+    "team_a": "Ecuador",
+    "team_b": "Duitsland",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "26 jun 2026 01:00",
+    "team_a": "Japan",
+    "team_b": "Zweden",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "26 jun 2026 01:00",
+    "team_a": "Tunesië",
+    "team_b": "Nederland",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "26 jun 2026 04:00",
+    "team_a": "Turkije",
+    "team_b": "USA",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "26 jun 2026 04:00",
+    "team_a": "Paraguay",
+    "team_b": "Australië",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "26 jun 2026 21:00",
+    "team_a": "Noorwegen",
+    "team_b": "Frankrijk",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "26 jun 2026 21:00",
+    "team_a": "Senegal",
+    "team_b": "Irak",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "27 jun 2026 02:00",
+    "team_a": "Kaapverdie",
+    "team_b": "Saoedi-Arabie",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "27 jun 2026 02:00",
+    "team_a": "Uruguay",
+    "team_b": "Spanje",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "27 jun 2026 05:00",
+    "team_a": "Egypte",
+    "team_b": "Iran",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "27 jun 2026 05:00",
+    "team_a": "Nieuw Zeeland",
+    "team_b": "België",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "27 jun 2026 23:00",
+    "team_a": "Panama",
+    "team_b": "Engeland",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "27 jun 2026 23:00",
+    "team_a": "Kroatië",
+    "team_b": "Ghana",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "28 jun 2026 01:30",
+    "team_a": "Colombia",
+    "team_b": "Portugal",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "28 jun 2026 01:30",
+    "team_a": "Congo",
+    "team_b": "Oezbekistan",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "28 jun 2026 04:00",
+    "team_a": "Algerije",
+    "team_b": "Oostenrijk",
+    "eindstand": null
+  },
+  {
+    "wedstrijd": "Groepswedstrijden",
+    "datum": "28 jun 2026 04:00",
+    "team_a": "Jordanie",
+    "team_b": "Argentinië",
+    "eindstand": null
+  }
+]

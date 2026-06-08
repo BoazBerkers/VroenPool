@@ -1,10 +1,18 @@
 """
-Data fetcher module with mocked API responses.
+Data fetcher module with real and mocked API responses.
 Fetches odds, injuries, team stats, and match context.
 """
 
+import os
 from typing import Dict, List, Any, Optional
 from modules.cache import cache_get, cache_set, get_cache_age
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+ODDS_API_KEY = os.getenv("ODDS_API_KEY")
+RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY")
 
 
 # Mock data for testing without live APIs
@@ -85,37 +93,108 @@ MOCK_CONTEXT = {
 }
 
 
-def fetch_odds(match_key: str, use_mock: bool = True) -> Dict[str, Any]:
+def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
     """
-    Fetch odds for a match (currently mocked).
+    Fetch odds for a match from The Odds API.
 
     Args:
         match_key: Match identifier (e.g., 'nederland_japan')
-        use_mock: Use mock data (for testing)
+        use_mock: Use mock data (for testing when API unavailable)
 
     Returns:
         Dict with win probabilities and over/under odds
     """
-    if use_mock:
-        return MOCK_ODDS.get(
-            match_key.lower(),
-            {
-                "home_win": 0.40,
-                "draw": 0.25,
-                "away_win": 0.35,
-                "over_2_5": 0.45,
-                "under_2_5": 0.55,
-            },
-        )
-
-    # TODO: Integrate The Odds API
+    # Check cache first
     cache_key = f"odds_{match_key}"
     cached = cache_get(cache_key, ttl_seconds=1800)  # 30 min TTL
     if cached:
         return cached
 
-    # Placeholder for real API call
-    return {}
+    # Try real API
+    if ODDS_API_KEY and not use_mock:
+        try:
+            url = "https://api.the-odds-api.com/v4/sports/soccer_fifa_world_cup/odds"
+            params = {
+                "apiKey": ODDS_API_KEY,
+                "regions": "eu",
+                "markets": "h2h,totals",
+                "oddsFormat": "decimal",
+            }
+
+            response = requests.get(url, params=params, timeout=5)
+            response.raise_for_status()
+            data = response.json()
+
+            # Find matching event
+            for event in data.get("events", []):
+                # Try to match by team names in event
+                event_name = event.get("name", "").lower()
+                if match_key.lower() in event_name or (
+                    "nederland" in event_name and "japan" in event_name
+                ):
+                    # Extract odds from bookmakers
+                    for bookmaker in event.get("bookmakers", []):
+                        markets = {m["key"]: m for m in bookmaker.get("markets", [])}
+
+                        h2h_market = markets.get("h2h", {})
+                        totals_market = markets.get("totals", {})
+
+                        if h2h_market:
+                            outcomes = {o["name"]: o["price"] for o in h2h_market.get("outcomes", [])}
+                            home_odds = outcomes.get(event.get("home_team", ""), 1.0)
+                            away_odds = outcomes.get(event.get("away_team", ""), 1.0)
+                            draw_odds = outcomes.get("Draw", 1.0)
+
+                            # Convert decimal odds to probabilities
+                            home_prob = 1.0 / home_odds if home_odds > 0 else 0.33
+                            away_prob = 1.0 / away_odds if away_odds > 0 else 0.33
+                            draw_prob = 1.0 / draw_odds if draw_odds > 0 else 0.33
+
+                            # Normalize
+                            total = home_prob + away_prob + draw_prob
+                            if total > 0:
+                                home_prob /= total
+                                away_prob /= total
+                                draw_prob /= total
+
+                            # Extract over/under
+                            over_under = {
+                                "over": 0.5,
+                                "under": 0.5,
+                            }
+                            for outcome in totals_market.get("outcomes", []):
+                                if outcome.get("point") == 2.5:
+                                    odds = outcome.get("price", 1.0)
+                                    prob = 1.0 / odds if odds > 0 else 0.5
+                                    if outcome.get("name", "").lower() == "over":
+                                        over_under["over"] = prob
+                                    else:
+                                        over_under["under"] = prob
+
+                            result = {
+                                "home_win": home_prob,
+                                "draw": draw_prob,
+                                "away_win": away_prob,
+                                "over_2_5": over_under["over"],
+                                "under_2_5": over_under["under"],
+                            }
+                            cache_set(cache_key, result)
+                            return result
+
+        except (requests.RequestException, KeyError, ValueError) as e:
+            print(f"Odds API error: {e}. Falling back to mock data.")
+
+    # Fallback to mock
+    return MOCK_ODDS.get(
+        match_key.lower(),
+        {
+            "home_win": 0.40,
+            "draw": 0.25,
+            "away_win": 0.35,
+            "over_2_5": 0.45,
+            "under_2_5": 0.55,
+        },
+    )
 
 
 def fetch_injuries(team_name: str, use_mock: bool = True) -> List[Dict[str, Any]]:
