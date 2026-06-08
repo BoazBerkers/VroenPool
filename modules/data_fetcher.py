@@ -23,6 +23,10 @@ MOCK_ODDS = {
         "away_win": 0.21,
         "over_2_5": 0.45,
         "under_2_5": 0.55,
+        "over_3_5": 0.32,
+        "under_3_5": 0.68,
+        "over_4_5": 0.18,
+        "under_4_5": 0.82,
     },
     "deutschland_curacao": {
         "home_win": 0.85,
@@ -30,6 +34,21 @@ MOCK_ODDS = {
         "away_win": 0.05,
         "over_2_5": 0.68,
         "under_2_5": 0.32,
+        "over_3_5": 0.50,
+        "under_3_5": 0.50,
+        "over_4_5": 0.32,
+        "under_4_5": 0.68,
+    },
+    "duitsland_curacao": {
+        "home_win": 0.85,
+        "draw": 0.10,
+        "away_win": 0.05,
+        "over_2_5": 0.68,
+        "under_2_5": 0.32,
+        "over_3_5": 0.50,
+        "under_3_5": 0.50,
+        "over_4_5": 0.32,
+        "under_4_5": 0.68,
     },
 }
 
@@ -155,7 +174,10 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
     cache_key = f"odds_{match_key}"
     cached = cache_get(cache_key, ttl_seconds=1800)  # 30 min TTL
     if cached:
+        print(f"[DEBUG] Using cached odds for {match_key}")
         return cached
+
+    print(f"[DEBUG] Fetching odds for {match_key}, use_mock={use_mock}")
 
     # Try real API
     if ODDS_API_KEY and not use_mock:
@@ -174,6 +196,7 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
 
             # API returns list of events directly (not nested under "events" key)
             events = data if isinstance(data, list) else data.get("events", [])
+            print(f"[DEBUG] API returned {len(events)} events")
 
             # Find matching event
             for event in events:
@@ -182,19 +205,26 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
                 home_team = event.get("home_team", "").lower()
                 away_team = event.get("away_team", "").lower()
 
+                print(f"[DEBUG] Checking event: {home_team} vs {away_team}")
+
                 # Match by team names or match_key
                 match_found = (
                     match_key.lower() in event_name
                     or (home_team and away_team and match_key.lower().replace("_", " ") in f"{home_team} {away_team}")
-                    or ("nederland" in event_name and "japan" in event_name)
+                    or ("deutschland" in event_name and "curacao" in event_name)
+                    or ("germany" in event_name and "curacao" in event_name)
+                    or ("duitsland" in event_name and "curacao" in event_name)
                 )
 
                 if not match_found:
                     continue
 
+                print(f"[DEBUG] Found matching event: {home_team} vs {away_team}")
+
                 # Extract odds from bookmakers
                 for bookmaker in event.get("bookmakers", []):
                     markets = {m["key"]: m for m in bookmaker.get("markets", [])}
+                    print(f"[DEBUG] Available markets: {list(markets.keys())}")
 
                     h2h_market = markets.get("h2h", {})
                     totals_market = markets.get("totals", {})
@@ -222,9 +252,11 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
 
                         for outcome in totals_market.get("outcomes", []):
                             point = outcome.get("point")
-                            odds = outcome.get("price", 1.0)
-                            prob = 1.0 / odds if odds > 0 else 0.5
+                            odds_val = outcome.get("price", 1.0)
+                            prob = 1.0 / odds_val if odds_val > 0 else 0.5
                             name = outcome.get("name", "").lower()
+
+                            print(f"[DEBUG] O/U market: point={point}, name={name}, prob={prob:.3f}")
 
                             if point == 2.5:
                                 if "over" in name:
@@ -244,6 +276,7 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
 
                         # Estimate missing O/U markets
                         over_under = estimate_missing_ou_markets(over_under)
+                        print(f"[DEBUG] Final O/U markets: {over_under}")
 
                         result = {
                             "home_win": home_prob,
@@ -260,9 +293,10 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
                         return result
 
         except (requests.RequestException, KeyError, ValueError, TypeError) as e:
-            print(f"Odds API error: {e}. Falling back to mock data.")
+            print(f"[DEBUG] Odds API error: {e}. Falling back to mock data.")
 
     # Fallback to mock
+    print(f"[DEBUG] Using mock data for {match_key}")
     return MOCK_ODDS.get(
         match_key.lower(),
         {
