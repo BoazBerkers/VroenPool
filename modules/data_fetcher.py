@@ -14,6 +14,70 @@ load_dotenv()
 ODDS_API_KEY = os.getenv("ODDS_API_KEY")
 RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY")
 
+# Mapping from Dutch team names (schedule.json) to API team names
+TEAM_NAME_MAPPING = {
+    # Dutch → API names (for Odds API matching)
+    "Duitsland": "Germany",
+    "Nederland": "Netherlands",
+    "Zuid Afrika": "South Africa",
+    "Zuid Korea": "South Korea",
+    "Tsjechië": "Czech Republic",
+    "Nieuw Zeeland": "New Zealand",
+    "Saoedi-Arabie": "Saudi Arabia",
+    "Ivoorkust": "Ivory Coast",
+    "Oostenrijk": "Austria",
+    "Brazilië": "Brazil",
+    "Argentinië": "Argentina",
+    "Frankrijk": "France",
+    "Engeland": "England",
+    "Spanje": "Spain",
+    "Italië": "Italy",
+    "Belgïe": "Belgium",
+    "België": "Belgium",
+    "Portugal": "Portugal",
+    "Kroatië": "Croatia",
+    "Roemenië": "Romania",
+    "Oezbekistan": "Uzbekistan",
+    "Canada": "Canada",
+    "USA": "USA",
+    "Mexico": "Mexico",
+    "Costa Rica": "Costa Rica",
+    "Panama": "Panama",
+    "Colombia": "Colombia",
+    "Ecuador": "Ecuador",
+    "Uruguay": "Uruguay",
+    "Paraguay": "Paraguay",
+    "Australië": "Australia",
+    "Japan": "Japan",
+    "Iran": "Iran",
+    "Irak": "Iraq",
+    "Qatar": "Qatar",
+    "Zwitserland": "Switzerland",
+    "Zweden": "Sweden",
+    "Noorwegen": "Norway",
+    "Polen": "Poland",
+    "Griekenland": "Greece",
+    "Turkije": "Turkey",
+    "Marokko": "Morocco",
+    "Egypte": "Egypt",
+    "Tunesië": "Tunisia",
+    "Senegal": "Senegal",
+    "Ghana": "Ghana",
+    "Congo": "DR Congo",
+    "Nigeria": "Nigeria",
+    "Kameroen": "Cameroon",
+    "Thailand": "Thailand",
+    "Vietnam": "Vietnam",
+    "Curacao": "Curacao",
+    "Bosnië": "Bosnia",
+    "Haiti": "Haiti",
+    "Schotland": "Scotland",
+    "Kaapverdie": "Cape Verde",
+    "Algerije": "Algeria",
+    "Jordanie": "Jordan",
+    "Oezbekistan": "Uzbekistan",
+}
+
 
 # Mock data for testing without live APIs
 MOCK_ODDS = {
@@ -112,6 +176,19 @@ MOCK_CONTEXT = {
 }
 
 
+def convert_dutch_to_api_name(dutch_name: str) -> str:
+    """
+    Convert Dutch team name to Odds API name.
+
+    Args:
+        dutch_name: Dutch team name from schedule
+
+    Returns:
+        API team name for Odds API matching
+    """
+    return TEAM_NAME_MAPPING.get(dutch_name, dutch_name)
+
+
 def estimate_missing_ou_markets(available_ou: Dict[str, float]) -> Dict[str, float]:
     """
     Estimate missing O/U markets from available ones.
@@ -207,13 +284,13 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
 
                 print(f"[DEBUG] Checking event: {home_team} vs {away_team}")
 
-                # Match by team names or match_key
+                # Match by team names or match_key (using API names)
                 match_found = (
                     match_key.lower() in event_name
                     or (home_team and away_team and match_key.lower().replace("_", " ") in f"{home_team} {away_team}")
-                    or ("deutschland" in event_name and "curacao" in event_name)
                     or ("germany" in event_name and "curacao" in event_name)
-                    or ("duitsland" in event_name and "curacao" in event_name)
+                    or ("netherlands" in event_name and "japan" in event_name)
+                    or ("south africa" in event_name and "mexico" in event_name)
                 )
 
                 if not match_found:
@@ -406,16 +483,21 @@ def fetch_all_match_data(
     Fetch all data for a match in one call.
 
     Args:
-        match_key: Match identifier
-        team_a: Team A name
-        team_b: Team B name
+        match_key: Match identifier (Dutch names)
+        team_a: Team A name (Dutch)
+        team_b: Team B name (Dutch)
         use_mock: Use mock data
 
     Returns:
         Aggregated dict with odds, injuries, form, context
     """
+    # Convert Dutch names to API names for fetching odds
+    api_team_a = convert_dutch_to_api_name(team_a)
+    api_team_b = convert_dutch_to_api_name(team_b)
+    api_match_key = f"{api_team_a.lower().replace(' ', '_')}_{api_team_b.lower().replace(' ', '_')}"
+
     return {
-        "odds": fetch_odds(match_key, use_mock),
+        "odds": fetch_odds(api_match_key, use_mock),
         "injuries_a": fetch_injuries(team_a, use_mock),
         "injuries_b": fetch_injuries(team_b, use_mock),
         "form_a": fetch_recent_form(team_a, use_mock=use_mock),
