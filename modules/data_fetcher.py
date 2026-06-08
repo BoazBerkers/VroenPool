@@ -93,6 +93,53 @@ MOCK_CONTEXT = {
 }
 
 
+def estimate_missing_ou_markets(available_ou: Dict[str, float]) -> Dict[str, float]:
+    """
+    Estimate missing O/U markets from available ones.
+
+    If we have O/U 2.5, estimate 3.5 and 4.5.
+    Higher thresholds → lower probability of overs.
+
+    Args:
+        available_ou: Dict with available O/U probabilities
+
+    Returns:
+        Dict with all O/U markets (2.5, 3.5, 4.5)
+    """
+    result = {
+        "over_2_5": available_ou.get("over_2_5", 0.45),
+        "under_2_5": available_ou.get("under_2_5", 0.55),
+        "over_3_5": available_ou.get("over_3_5"),
+        "under_3_5": available_ou.get("under_3_5"),
+        "over_4_5": available_ou.get("over_4_5"),
+        "under_4_5": available_ou.get("under_4_5"),
+    }
+
+    # If we have O/U 2.5 but not 3.5, estimate it
+    if result["over_3_5"] is None and result["over_2_5"] is not None:
+        # O/U 3.5 should be lower probability (fewer goals in 3.5+ range)
+        # Rough rule: over_3_5 ≈ over_2_5 * 0.7
+        result["over_3_5"] = max(0.20, result["over_2_5"] * 0.70)
+        result["under_3_5"] = 1.0 - result["over_3_5"]
+
+    # If we have O/U 2.5 but not 4.5, estimate it
+    if result["over_4_5"] is None and result["over_2_5"] is not None:
+        # O/U 4.5 is even lower probability
+        # Rough rule: over_4_5 ≈ over_2_5 * 0.4
+        result["over_4_5"] = max(0.10, result["over_2_5"] * 0.40)
+        result["under_4_5"] = 1.0 - result["over_4_5"]
+
+    # Fallback defaults if we have nothing
+    if result["over_3_5"] is None:
+        result["over_3_5"] = 0.40
+        result["under_3_5"] = 0.60
+    if result["over_4_5"] is None:
+        result["over_4_5"] = 0.30
+        result["under_4_5"] = 0.70
+
+    return result
+
+
 def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
     """
     Fetch odds for a match from The Odds API.
@@ -171,14 +218,7 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
                             draw_prob /= total
 
                         # Extract over/under for multiple thresholds
-                        over_under = {
-                            "over_2_5": 0.5,
-                            "under_2_5": 0.5,
-                            "over_3_5": 0.45,
-                            "under_3_5": 0.55,
-                            "over_4_5": 0.35,
-                            "under_4_5": 0.65,
-                        }
+                        over_under = {}
 
                         for outcome in totals_market.get("outcomes", []):
                             point = outcome.get("point")
@@ -202,16 +242,19 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
                                 else:
                                     over_under["under_4_5"] = prob
 
+                        # Estimate missing O/U markets
+                        over_under = estimate_missing_ou_markets(over_under)
+
                         result = {
                             "home_win": home_prob,
                             "draw": draw_prob,
                             "away_win": away_prob,
                             "over_2_5": over_under["over_2_5"],
                             "under_2_5": over_under["under_2_5"],
-                            "over_3_5": over_under.get("over_3_5", 0.45),
-                            "under_3_5": over_under.get("under_3_5", 0.55),
-                            "over_4_5": over_under.get("over_4_5", 0.35),
-                            "under_4_5": over_under.get("under_4_5", 0.65),
+                            "over_3_5": over_under["over_3_5"],
+                            "under_3_5": over_under["under_3_5"],
+                            "over_4_5": over_under["over_4_5"],
+                            "under_4_5": over_under["under_4_5"],
                         }
                         cache_set(cache_key, result)
                         return result
