@@ -1,0 +1,312 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.screen{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:24px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.topbar-title{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.topbar-sub{font-size:12px;color:var(--color-text-secondary)}
+.section-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-secondary);margin-bottom:8px}
+.select-row{display:flex;gap:8px;align-items:center;margin-bottom:16px}
+.select-box{flex:1;height:36px;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:0 12px;font-size:13px;color:var(--color-text-primary);display:flex;align-items:center;justify-content:space-between}
+.pill{font-size:11px;padding:4px 10px;border-radius:12px;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-primary);cursor:pointer}
+.pill.active{background:var(--color-text-secondary);color:var(--color-background-primary);border-color:transparent}
+.match-header{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:20px;padding:16px;background:var(--color-background-primary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)}
+.team-name{font-size:16px;font-weight:500;color:var(--color-text-primary);text-align:center;min-width:100px}
+.vs{font-size:13px;color:var(--color-text-secondary)}
+.match-meta{font-size:11px;color:var(--color-text-secondary);text-align:center;margin-bottom:16px}
+.recommendation{background:var(--color-background-primary);border:2px solid #3B6D11;border-radius:var(--border-radius-lg);padding:16px;margin-bottom:16px;text-align:center}
+.rec-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#3B6D11;margin-bottom:4px}
+.rec-score{font-size:36px;font-weight:500;color:var(--color-text-primary);letter-spacing:2px}
+.rec-strategy{font-size:12px;color:var(--color-text-secondary);margin-top:4px}
+.rec-ev{font-size:13px;color:#3B6D11;margin-top:6px;font-weight:500}
+.cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.info-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.info-card-title{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.odds-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.odds-row:last-child{border:none}
+.odds-pct{font-weight:500;color:var(--color-text-primary)}
+.form-dot{display:inline-block;width:14px;height:14px;border-radius:50%;margin:1px;font-size:9px;text-align:center;line-height:14px;font-weight:500}
+.form-w{background:#C0DD97;color:#27500A}
+.form-d{background:#FAC775;color:#633806}
+.form-l{background:#F7C1C1;color:#791F1F}
+.injury-item{font-size:11px;padding:3px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;justify-content:space-between}
+.injury-item:last-child{border:none}
+.injury-status{font-size:10px;padding:1px 5px;border-radius:3px}
+.inj-out{background:#F7C1C1;color:#791F1F}
+.inj-doubt{background:#FAC775;color:#633806}
+.heatmap-wrap{margin-bottom:16px}
+.heatmap-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);margin-bottom:8px}
+.heatmap{display:grid;grid-template-columns:20px repeat(6,1fr);gap:2px}
+.hm-cell{height:26px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500}
+.hm-label{font-size:10px;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center}
+.alts{margin-bottom:16px}
+.alt-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.alt-row:last-child{border:none}
+.alt-score{min-width:36px;font-weight:500;color:var(--color-text-primary)}
+.alt-ev{min-width:40px;text-align:right;color:var(--color-text-secondary)}
+.alt-bar-wrap{flex:1;height:4px;background:var(--color-background-secondary);border-radius:2px}
+.alt-bar{height:4px;border-radius:2px;background:#639922}
+.alt-delta{min-width:48px;text-align:right;font-size:11px;color:var(--color-text-secondary)}
+.manual-row{display:flex;gap:8px;align-items:center;padding:12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md)}
+.score-input{width:40px;height:32px;text-align:center;border:0.5px solid var(--color-border-secondary);border-radius:4px;font-size:15px;font-weight:500;background:var(--color-background-secondary);color:var(--color-text-primary)}
+.dash{font-size:18px;color:var(--color-text-secondary)}
+.calc-btn{padding:6px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:transparent;color:var(--color-text-primary);cursor:pointer}
+.manual-result{font-size:13px;color:var(--color-text-secondary)}
+.arch-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px}
+.arch-row{display:flex;gap:6px;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.arch-row:last-child{border:none}
+.arch-num{width:20px;height:20px;border-radius:10px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px}
+.arch-name{font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.arch-desc{color:var(--color-text-secondary);font-size:11px}
+.tag-api{font-size:10px;padding:1px 6px;border-radius:3px;background:var(--color-background-info);color:var(--color-text-info);margin-left:4px}
+.tag-local{font-size:10px;padding:1px 6px;border-radius:3px;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-secondary);margin-left:4px}
+</style>
+
+<div style="padding:1rem 0">
+
+<div class="screen">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">WK2026 Predictor</div>
+      <div class="topbar-sub">VroenWK2026 pool · bijgewerkt 12 min geleden</div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <span class="pill">Refresh</span>
+      <span class="pill active">Groepsfase</span>
+    </div>
+  </div>
+
+  <div class="section-label">Selecteer wedstrijd</div>
+  <div class="select-row">
+    <div class="select-box">
+      <span>14 jun · Nederland vs Japan &nbsp;·&nbsp; Groep F &nbsp;·&nbsp; 22:00</span>
+      <span style="font-size:11px;color:var(--color-text-secondary)">▾</span>
+    </div>
+    <span class="pill active">&lt; 24u</span>
+    <span class="pill">Alle</span>
+  </div>
+
+  <div class="match-header">
+    <div class="team-name">🇳🇱 Nederland</div>
+    <div class="vs">vs</div>
+    <div class="team-name">🇯🇵 Japan</div>
+  </div>
+  <div class="match-meta">14 juni 2026 · 22:00 · Arlington, Texas · Groep F · Speeldag 1</div>
+
+  <div class="recommendation">
+    <div class="rec-label">Aanbevolen voorspelling</div>
+    <div class="rec-score">2 – 0</div>
+    <div class="rec-strategy">Nul-houden hefboom · Japan mist Mitoma &amp; Minamino</div>
+    <div class="rec-ev">Verwachte punten: 84.3 EV</div>
+  </div>
+
+  <div class="cols3">
+    <div class="info-card">
+      <div class="info-card-title">Odds</div>
+      <div class="odds-row"><span style="color:var(--color-text-secondary);font-size:12px">NL wint</span><span class="odds-pct">53%</span></div>
+      <div class="odds-row"><span style="color:var(--color-text-secondary);font-size:12px">Gelijkspel</span><span class="odds-pct">26%</span></div>
+      <div class="odds-row"><span style="color:var(--color-text-secondary);font-size:12px">Japan wint</span><span class="odds-pct">21%</span></div>
+      <div class="odds-row" style="margin-top:4px"><span style="color:var(--color-text-secondary);font-size:12px">O/U 2.5</span><span class="odds-pct">Under</span></div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Blessures</div>
+      <div class="injury-item">
+        <span style="color:var(--color-text-primary)">Simons</span>
+        <span class="injury-status inj-out">Uit</span>
+      </div>
+      <div class="injury-item">
+        <span style="color:var(--color-text-primary)">De Ligt</span>
+        <span class="injury-status inj-out">Uit</span>
+      </div>
+      <div class="injury-item" style="margin-top:4px;border-top:0.5px solid var(--color-border-tertiary);padding-top:4px">
+        <span style="color:var(--color-text-primary)">Mitoma</span>
+        <span class="injury-status inj-out">Uit</span>
+      </div>
+      <div class="injury-item">
+        <span style="color:var(--color-text-primary)">Minamino</span>
+        <span class="injury-status inj-out">Uit</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Recente vorm</div>
+      <div style="margin-bottom:6px;font-size:11px;color:var(--color-text-secondary)">Nederland</div>
+      <div style="margin-bottom:8px">
+        <span class="form-dot form-w">W</span>
+        <span class="form-dot form-w">W</span>
+        <span class="form-dot form-d">D</span>
+        <span class="form-dot form-w">W</span>
+        <span class="form-dot form-w">W</span>
+      </div>
+      <div style="margin-bottom:6px;font-size:11px;color:var(--color-text-secondary)">Japan</div>
+      <div>
+        <span class="form-dot form-w">W</span>
+        <span class="form-dot form-w">W</span>
+        <span class="form-dot form-w">W</span>
+        <span class="form-dot form-l">L</span>
+        <span class="form-dot form-w">W</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="heatmap-wrap">
+    <div class="heatmap-title">EV heatmap — alle mogelijke voorspellingen (0-0 t/m 4-4)</div>
+    <div class="heatmap" id="heatmap"></div>
+  </div>
+
+  <div class="alts">
+    <div class="section-label">Alternatieven</div>
+    <div class="alt-row">
+      <div class="alt-score">2-0 ★</div>
+      <div class="alt-bar-wrap"><div class="alt-bar" style="width:100%"></div></div>
+      <div class="alt-ev">84.3</div>
+      <div class="alt-delta" style="color:#3B6D11">aanbevolen</div>
+    </div>
+    <div class="alt-row">
+      <div class="alt-score">1-0</div>
+      <div class="alt-bar-wrap"><div class="alt-bar" style="width:96%"></div></div>
+      <div class="alt-ev">81.2</div>
+      <div class="alt-delta">-3.1</div>
+    </div>
+    <div class="alt-row">
+      <div class="alt-score">2-1</div>
+      <div class="alt-bar-wrap"><div class="alt-bar" style="width:91%"></div></div>
+      <div class="alt-ev">76.8</div>
+      <div class="alt-delta">-7.5</div>
+    </div>
+    <div class="alt-row">
+      <div class="alt-score">3-0</div>
+      <div class="alt-bar-wrap"><div class="alt-bar" style="width:88%"></div></div>
+      <div class="alt-ev">74.1</div>
+      <div class="alt-delta">-10.2</div>
+    </div>
+    <div class="alt-row">
+      <div class="alt-score">1-1</div>
+      <div class="alt-bar-wrap"><div class="alt-bar" style="width:69%;background:#EF9F27"></div></div>
+      <div class="alt-ev">58.4</div>
+      <div class="alt-delta">-25.9</div>
+    </div>
+  </div>
+
+  <div class="section-label">Manueel testen</div>
+  <div class="manual-row">
+    <span style="font-size:12px;color:var(--color-text-secondary);min-width:80px">Mijn keuze:</span>
+    <input class="score-input" type="number" value="1" min="0" max="9" id="m-a" oninput="calcManual()">
+    <span class="dash">–</span>
+    <input class="score-input" type="number" value="1" min="0" max="9" id="m-b" oninput="calcManual()">
+    <span class="manual-result" id="manual-result">→ EV: 58.4 pts (gelijkspel-anker)</span>
+  </div>
+</div>
+
+<div class="screen">
+  <div class="arch-title">Architectuur — modules & dataflow</div>
+  <div class="arch-row">
+    <div class="arch-num">1</div>
+    <div>
+      <div class="arch-name">schedule.py <span class="tag-local">lokaal</span></div>
+      <div class="arch-desc">Volledig WK-schema (hardcoded). Geeft aankomende wedstrijden terug op basis van huidige tijd.</div>
+    </div>
+  </div>
+  <div class="arch-row">
+    <div class="arch-num">2</div>
+    <div>
+      <div class="arch-name">data_fetcher.py <span class="tag-api">The Odds API</span> <span class="tag-api">API-Football</span></div>
+      <div class="arch-desc">Haalt odds, teamvorm, H2H en blessures op. Cache: 30 min voor odds, 6 uur voor historische data.</div>
+    </div>
+  </div>
+  <div class="arch-row">
+    <div class="arch-num">3</div>
+    <div>
+      <div class="arch-name">poisson.py <span class="tag-local">berekend</span></div>
+      <div class="arch-desc">Bouwt score-matrix P(x-y) voor alle scores 0-0 t/m 5-5 via Poisson-verdeling op basis van lambda's.</div>
+    </div>
+  </div>
+  <div class="arch-row">
+    <div class="arch-num">4</div>
+    <div>
+      <div class="arch-name">ev_calculator.py <span class="tag-local">kern</span></div>
+      <div class="arch-desc">calculate_points(a,b,x,y) → punten. expected_value(pred, matrix) → EV. best_prediction(matrix) → optimum.</div>
+    </div>
+  </div>
+  <div class="arch-row">
+    <div class="arch-num">5</div>
+    <div>
+      <div class="arch-name">strategy.py <span class="tag-local">regels</span></div>
+      <div class="arch-desc">Past de 5 strategieregels toe (nul-houden, gelijkspel-anker, blessure, rotatierisico, hoogte) op EV-uitkomst.</div>
+    </div>
+  </div>
+  <div class="arch-row">
+    <div class="arch-num">6</div>
+    <div>
+      <div class="arch-name">app.py <span class="tag-local">Streamlit UI</span></div>
+      <div class="arch-desc">Orkestreert alles. Selectie → data → matrix → EV → strategie → output.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const heatmapEl = document.getElementById('heatmap');
+const evData = [
+  [84.3,81.2,72.1,62.4,54.1,44.2],
+  [76.8,69.4,58.4,48.2,40.1,32.0],
+  [62.1,54.3,44.1,36.2,30.1,24.0],
+  [50.4,43.2,34.8,28.4,22.1,17.5],
+  [40.2,34.1,26.4,21.0,16.8,12.4],
+  [32.1,26.8,20.1,15.4,11.2,8.8]
+];
+const maxEV = 84.3;
+function evColor(v) {
+  const t = v / maxEV;
+  if (t > 0.9) return '#C0DD97';
+  if (t > 0.7) return '#EAF3DE';
+  if (t > 0.5) return '#FAC775';
+  if (t > 0.3) return '#F5C4B3';
+  return '#F7C1C1';
+}
+function evText(v) {
+  if (v > maxEV * 0.9) return '#27500A';
+  if (v > maxEV * 0.7) return '#3B6D11';
+  if (v > maxEV * 0.5) return '#633806';
+  if (v > maxEV * 0.3) return '#993C1D';
+  return '#791F1F';
+}
+
+heatmapEl.innerHTML = '';
+const rowLabels = ['NL','1','2','3','4','5'];
+heatmapEl.appendChild(Object.assign(document.createElement('div'), {className:'hm-label'}));
+for (let j=0;j<=5;j++) {
+  const el = document.createElement('div');
+  el.className = 'hm-label';
+  el.style.fontSize = '9px';
+  el.textContent = j;
+  heatmapEl.appendChild(el);
+}
+for (let i=0;i<=5;i++) {
+  const lbl = document.createElement('div');
+  lbl.className = 'hm-label';
+  lbl.style.fontSize = '9px';
+  lbl.textContent = i;
+  heatmapEl.appendChild(lbl);
+  for (let j=0;j<=5;j++) {
+    const v = evData[i][j];
+    const cell = document.createElement('div');
+    cell.className = 'hm-cell';
+    cell.style.background = evColor(v);
+    cell.style.color = evText(v);
+    cell.textContent = Math.round(v);
+    heatmapEl.appendChild(cell);
+  }
+}
+
+function calcManual() {
+  const a = parseInt(document.getElementById('m-a').value) || 0;
+  const b = parseInt(document.getElementById('m-b').value) || 0;
+  const approxEV = evData[Math.min(a,5)][Math.min(b,5)];
+  let strategy = '';
+  if (a === b) strategy = ' (gelijkspel-anker)';
+  else if (b === 0) strategy = ' (nul-houden hefboom)';
+  document.getElementById('manual-result').textContent = `→ EV: ${approxEV.toFixed(1)} pts${strategy}`;
+}
+</script>
