@@ -148,7 +148,7 @@ def load_schedule_from_file(filepath: str = None) -> None:
     global SAMPLE_SCHEDULE
 
     if filepath is None:
-        filepath = Path(__file__).parent.parent / "data" / "schedule.json"
+        filepath = Path(__file__).parent / "data" / "schedule.json"
 
     if Path(filepath).exists():
         with open(filepath, "r") as f:

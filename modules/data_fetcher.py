@@ -285,12 +285,12 @@ def fetch_odds(match_key: str, use_mock: bool = False) -> Dict[str, Any]:
                 print(f"[DEBUG] Checking event: {home_team} vs {away_team}")
 
                 # Match by team names or match_key (using API names)
+                api_home = convert_dutch_to_api_name(team_a).lower()
+                api_away = convert_dutch_to_api_name(team_b).lower()
+
                 match_found = (
-                    match_key.lower() in event_name
-                    or (home_team and away_team and match_key.lower().replace("_", " ") in f"{home_team} {away_team}")
-                    or ("germany" in event_name and "curacao" in event_name)
-                    or ("netherlands" in event_name and "japan" in event_name)
-                    or ("south africa" in event_name and "mexico" in event_name)
+                    (api_home in home_team and api_away in away_team) or
+                    (api_home in away_team and api_away in home_team)  # soms omgekeerde volgorde
                 )
 
                 if not match_found:
